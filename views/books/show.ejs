@@ -4,7 +4,7 @@
     <header>
         <h1>
             <%= book.title %>
-            <%if ( book.user.email === email){%>
+            <%if (authorized && (typeof book.user === 'undefined' || book.user.email === email)) {%> 
             <a href="/books/<%= book.id %>/edit">
                 <i class="fa fa-edit"></i>
                 </a>
