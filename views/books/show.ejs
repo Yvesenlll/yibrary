@@ -1,0 +1,31 @@
+<%- include ('../partials/header') %> 
+
+<div class="container my-5">
+    <header>
+        <h1>
+            <%= book.title %>
+            <%if ( book.user.email === email){%>
+            <a href="/books/<%= book.id %>/edit">
+                <i class="fa fa-edit"></i>
+                </a>
+            <%}%>
+        </h1>
+        <br>
+        <small>
+            <%= (book.updatedAt.toLocaleString("en-CA")) %> 
+        </small>
+        <% if(typeof book.user !== 'undefined') {%>
+        <p><strong>By: <%= book.author %></strong></p>
+        <%}%>
+    </header>
+    <hr>
+
+    <div class="content">
+        <%- book.detail %>
+    </div>
+    <br><br><br><br><br><br><br>
+    <small>created by:  <%= book.user.fullname %></small>
+
+
+</div>
+<%- include ('../partials/footer') %> 
