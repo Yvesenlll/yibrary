@@ -6,4 +6,5 @@ const router = require('express').Router();
 
 // Step 1: Add your resource routes to the router composer
 (require('./routes/books'))(router);
+
 module.exports = router;

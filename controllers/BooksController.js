@@ -27,13 +27,9 @@ exports.index = async (req, res) => {
       .populate('user')
       .sort({updatedAt: 'desc'});
 
-      res.render(`${viewPath}/index`, {
-      pageTitle: 'Library',
-      books: books
-      }); 
+      res.status(200).json(books);
   }catch(error){
-      req.flash('danger', `There was an error displaying the library: ${error}`)
-      res.redirect('/')
+    res.status(400).json({message: 'There was an error fetching the books', error});
   }
 };
 
@@ -42,37 +38,33 @@ exports.show = async (req, res) => {
       // console.log(req.params);
   const book = await Book.findById(req.params.id)
   .populate('user');
-  // req.flash('success', 'test 123');
-   res.render(`${viewPath}/show`, {
-       pageTitle: Book.title,
-       book: book
-   });
+  
+  res.status(200).json(book);
   } catch (error) {
-      req.flash('danger', `There was an error displaying the book: ${error}`)
-      res.redirect('/')
+    res.status(400).json({message: 'There was an error fetching the books', error});
   }
   
 };
 
 exports.new = (req,res) => {
-
   res.render(`${viewPath}/new`, {
       pageTitle: "New Book"
   });
 };
 
 exports.create = async (req,res) => {
+  console.log("createFUnc", req.body);
   try {
       const {user: email} = req.session.passport;
       const user = await User.findOne({email: email});
+
       const bookID = await Book.create({user: user._id, ...req.body});        
-      req.flash('success', 'Book created successfully');
-      
-      res.redirect(`/books/${bookID.id}`);
+      console.log(bookID);
+
+      res.status(200).json(bookID);
   } catch (error) {
-      req.flash('danger', `There was an error creating the book: ${error}`);
-      req.session.formData = req.body;
-      res.redirect('books/new');
+    res.status(400).json({message: "There was an error creating the book", error});
+    console.log(error);
   }
 
 };
@@ -97,18 +89,23 @@ exports.update = async (req, res) => {
     const { user: email } = req.session.passport;
     const user = await User.findOne({email: email});
 
-    let book = await Book.findById(req.body.id);
+    let book = await Book.findById(req.body._id);
     if (!book) throw new Error('Book could not be found');
 
     const attributes = {user: user._id, ...req.body};
     await Book.validate(attributes);
     await Book.findByIdAndUpdate(attributes.id, attributes);
 
+    console.log("attribute",attributes)
+    console.log("req body",req.body.id)
+    console.log("book,", book)
+
     req.flash('success', 'The book was updated successfully');
     res.redirect(`/books/${req.body.id}`);
   } catch (error) {
     req.flash('danger', `There was an error updating this book: ${error}`);
     res.redirect(`/books/${req.body.id}/edit`);
+    console.log(error);
   }
 };
 
