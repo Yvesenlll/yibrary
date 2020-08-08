@@ -94,35 +94,34 @@ exports.update = async (req, res) => {
 
     const attributes = {user: user._id, ...req.body};
     await Book.validate(attributes);
-    await Book.findByIdAndUpdate(attributes.id, attributes);
+    await Book.findByIdAndUpdate(attributes._id, attributes);
 
     console.log("attribute",attributes)
     console.log("req body",req.body.id)
     console.log("book,", book)
 
-    req.flash('success', 'The book was updated successfully');
-    res.redirect(`/books/${req.body.id}`);
+    // req.flash('success', 'The book was updated successfully');
+    // res.redirect(`/books/${req.body.id}`);
+    res.status(200).json({message:'success'});
   } catch (error) {
-    req.flash('danger', `There was an error updating this book: ${error}`);
-    res.redirect(`/books/${req.body.id}/edit`);
+    // req.flash('danger', `There was an error updating this book: ${error}`);
+    // res.redirect(`/books/${req.body.id}/edit`);
+    // console.log(error);
     console.log(error);
+    res.status(400).json({message: 'failed', error});
   }
 };
-
 
 exports.delete = async (req, res) => {
   try {
         console.log(req.body);
         await Book.deleteOne({_id: req.body.id});
-        req.flash('success', 'The book was deleted successfully');
-        res.redirect(`/books`);
+        res.status(200).json({message: "success"});
       } catch (error) {
-        req.flash('danger', `There was an error deleting this book: ${error}`);
-        res.redirect(`/books`);
+        console.log(error);
+        res.status(400).json({message: 'failed', error});
       }
 };
-
-
 
 
 
